@@ -18,7 +18,7 @@ class RegistrationValidationService(
             .flatMap { alcoholicDaoFacade.findByLogin(it.login) }
             .map {
                 throw EntityAlreadyExistsException(
-                    message = "Login already exists",
+                    message = "Alcoholic already exists",
                     payload = emptyMap()
                 )
                 dto
