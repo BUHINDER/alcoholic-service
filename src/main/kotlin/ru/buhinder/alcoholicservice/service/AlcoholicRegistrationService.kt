@@ -1,7 +1,6 @@
 package ru.buhinder.alcoholicservice.service
 
 import org.springframework.core.convert.ConversionService
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
@@ -17,17 +16,17 @@ import java.util.UUID
 class AlcoholicRegistrationService(
     private val alcoholicDaoFacade: AlcoholicDaoFacade,
     private val conversionService: ConversionService,
-    private val passwordEncoder: PasswordEncoder,
+    private val passwordService: PasswordService,
     private val registrationValidationService: RegistrationValidationService,
 ) {
     private val logger by LoggerDelegate()
 
     fun register(dto: AlcoholicDto): Mono<AlcoholicResponse> {
         return dto.toMono()
-            .doOnNext { logger.info("Registering user") }
+            .doOnNext { logger.info("Registering alcoholic") }
             .map { registrationValidationService.validateLoginDoesNotExist(it) }
             .flatMap {
-                it.zipWith(encodePassword(it))
+                it.zipWith(passwordService.encodePassword(it))
                 { dto, password ->
                     AlcoholicEntity(
                         id = UUID.randomUUID(),
@@ -41,12 +40,7 @@ class AlcoholicRegistrationService(
                     .flatMap { entity -> alcoholicDaoFacade.insert(entity) }
             }
             .map { conversionService.convert(it, AlcoholicResponse::class.java)!! }
-    }
-
-    private fun encodePassword(dto: Mono<AlcoholicDto>): Mono<String> {
-        return dto.map { it.password }
-            .map { passwordEncoder.encode(it) }
-            .doOnNext { logger.info("Encoded user's password") }
+            .doOnNext { logger.info("Alcoholic successfully registered") }
     }
 
 }

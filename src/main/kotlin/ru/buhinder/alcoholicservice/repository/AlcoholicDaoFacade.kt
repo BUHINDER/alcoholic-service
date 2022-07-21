@@ -16,7 +16,7 @@ class AlcoholicDaoFacade(
 
     fun insert(entity: AlcoholicEntity): Mono<AlcoholicEntity> {
         return r2dbcEntityOperations.insert(entity)
-            .doOnNext { logger.info("Saved entity with id ${it.id}") }
+            .doOnNext { logger.info("Saved alcoholic with id ${it.id}") }
 
     }
 
@@ -25,7 +25,7 @@ class AlcoholicDaoFacade(
             Query.query(Criteria.where("login").`is`(login)),
             AlcoholicEntity::class.java
         )
-            .doOnNext { logger.info("Found entity with id ${it.id}") }
+            .doOnNext { logger.info("Found alcoholic with id ${it.id}") }
     }
 
 }
