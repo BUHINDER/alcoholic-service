@@ -13,7 +13,7 @@ import ru.buhinder.alcoholicservice.service.validation.RegistrationValidationSer
 import java.util.UUID
 
 @Service
-class AlcoholicRegistrationService(
+class RegistrationService(
     private val alcoholicDaoFacade: AlcoholicDaoFacade,
     private val conversionService: ConversionService,
     private val passwordService: PasswordService,

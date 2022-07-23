@@ -17,6 +17,8 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("com.auth0:java-jwt:3.19.2")
+
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
