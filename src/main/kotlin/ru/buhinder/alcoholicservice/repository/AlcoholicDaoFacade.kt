@@ -16,17 +16,23 @@ class AlcoholicDaoFacade(
     private val logger by LoggerDelegate()
 
     fun insert(entity: AlcoholicEntity): Mono<AlcoholicEntity> {
-        return r2dbcEntityOperations.insert(entity)
-            .doOnNext { logger.info("Saved alcoholic with id ${it.id}") }
+        return Mono.just(logger.info("Trying to save AlcoholicEntity with id ${entity.id}"))
+            .flatMap { r2dbcEntityOperations.insert(entity) }
+            .doOnNext { logger.info("Saved AlcoholicEntity with id ${entity.id}") }
+            .doOnError { logger.info("Error saving AlcoholicEntity with id ${entity.id}") }
 
     }
 
     fun findByLogin(login: String): Mono<AlcoholicEntity> {
-        return r2dbcEntityOperations.selectOne(
-            Query.query(CriteriaDefinition.from(Criteria.where("login").`is`(login))),
-            AlcoholicEntity::class.java
-        )
-            .doOnNext { logger.info("Found alcoholic with id ${it.id}") }
+        return Mono.just(logger.info("Trying to find AlcoholicEntity with login $login"))
+            .flatMap {
+                r2dbcEntityOperations.selectOne(
+                    Query.query(CriteriaDefinition.from(Criteria.where("login").`is`(login))),
+                    AlcoholicEntity::class.java
+                )
+            }
+            .doOnNext { logger.info("Found AlcoholicEntity with login $login") }
+            .doOnError { logger.info("Error retrieving AlcoholicEntity with login $login") }
     }
 
 }

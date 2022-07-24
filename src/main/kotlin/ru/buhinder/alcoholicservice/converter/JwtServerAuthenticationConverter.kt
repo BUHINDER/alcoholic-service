@@ -21,6 +21,7 @@ class JwtServerAuthenticationConverter(
                     .map { it.first() }
                     .map { it.replace("Bearer ", "") }
                     .flatMap { tokenService.validateToken(it) }
+                    .filter { it.claims.contains("roles") }
                     .onErrorResume { Mono.empty() }
             }
             .map {

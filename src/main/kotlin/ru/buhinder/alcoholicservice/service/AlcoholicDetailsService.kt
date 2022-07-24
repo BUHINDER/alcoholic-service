@@ -21,7 +21,7 @@ class AlcoholicDetailsService(
         return daoFacade.findByLogin(username)
             .switchIfEmpty {
                 EntityDoesNotExistException(
-                    message = "No such alcoholic",
+                    message = "No alcoholic found with username $username",
                     payload = mapOf("login" to username)
                 ).toMono()
             }

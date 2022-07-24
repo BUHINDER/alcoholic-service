@@ -14,8 +14,8 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers
 import ru.buhinder.alcoholicservice.converter.JwtServerAuthenticationConverter
 import ru.buhinder.alcoholicservice.service.AlcoholicDetailsService
-import ru.buhinder.alcoholicservice.service.JwtAuthenticationManager
 import ru.buhinder.alcoholicservice.service.BasicAuthenticationSuccessHandler
+import ru.buhinder.alcoholicservice.service.JwtAuthenticationManager
 
 
 @Configuration
@@ -38,6 +38,13 @@ class SecurityConfig {
         return http
             .csrf().disable()
             .cors()
+
+            .and()
+
+            .authorizeExchange()
+            //TODO refactor paths
+            .pathMatchers("/api/refresh", "/api/register")
+            .permitAll()
 
             .and()
 
