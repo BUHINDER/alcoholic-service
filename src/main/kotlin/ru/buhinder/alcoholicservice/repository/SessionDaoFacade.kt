@@ -7,7 +7,9 @@ import org.springframework.data.relational.core.query.Query
 import org.springframework.data.relational.core.query.Update
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.switchIfEmpty
 import ru.buhinder.alcoholicservice.config.LoggerDelegate
+import ru.buhinder.alcoholicservice.controller.advice.exception.EntityNotFoundException
 import ru.buhinder.alcoholicservice.entity.SessionEntity
 import java.util.UUID
 
@@ -25,6 +27,26 @@ class SessionDaoFacade(
 
     }
 
+    fun getByIdAndIsActiveIsTrue(id: UUID): Mono<SessionEntity> {
+        return r2dbcEntityOperations.selectOne(
+            Query.query(
+                CriteriaDefinition.from(
+                    Criteria.where("id").`is`(id),
+                    Criteria.where("is_active").isTrue
+                )
+            ),
+            SessionEntity::class.java
+        )
+            .switchIfEmpty {
+                Mono.error(
+                    EntityNotFoundException(
+                        message = "Session not found",
+                        payload = mapOf("id" to id)
+                    )
+                )
+            }
+    }
+
     fun invalidateSession(sessionId: UUID): Mono<Int> {
         return Mono.just(logger.info("Trying to invalidate SessionEntity with id $sessionId"))
             .flatMap {
@@ -32,10 +54,10 @@ class SessionDaoFacade(
                     Query.query(
                         CriteriaDefinition.from(
                             Criteria.where("id").`is`(sessionId),
-                            Criteria.where("is_expired").isFalse
+                            Criteria.where("is_active").isTrue
                         )
                     ),
-                    Update.update("is_expired", true),
+                    Update.update("is_active", false),
                     SessionEntity::class.java
                 )
             }

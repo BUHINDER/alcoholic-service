@@ -28,7 +28,7 @@ class BasicAuthenticationSuccessHandler(
             .flatMap { ex ->
                 val sessionId = UUID.randomUUID()
                 val alcoholicId = UUID.fromString(authentication.name)
-                val accessToken = tokenService.createAccessToken(alcoholicId)
+                val accessToken = tokenService.createAccessToken(alcoholicId, sessionId)
                 val refreshToken = tokenService.createRefreshToken(alcoholicId, sessionId)
                 val refreshTokenCookie = tokenService.createRefreshTokenCookie(refreshToken)
 

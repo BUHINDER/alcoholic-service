@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 import reactor.kotlin.core.publisher.toMono
-import ru.buhinder.alcoholicservice.controller.advice.exception.EntityDoesNotExistException
+import ru.buhinder.alcoholicservice.controller.advice.exception.EntityNotFoundException
 import ru.buhinder.alcoholicservice.enums.Role.ROLE_DRINKER
 import ru.buhinder.alcoholicservice.repository.AlcoholicDaoFacade
 
@@ -20,7 +20,7 @@ class AlcoholicDetailsService(
     override fun findByUsername(username: String): Mono<UserDetails> {
         return daoFacade.findByLogin(username)
             .switchIfEmpty {
-                EntityDoesNotExistException(
+                EntityNotFoundException(
                     message = "No alcoholic found with username $username",
                     payload = mapOf("login" to username)
                 ).toMono()

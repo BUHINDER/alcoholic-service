@@ -7,7 +7,7 @@ enum class AlcoholicErrorCode : ErrorCode {
     CANNOT_BE_CREATED,
     CANNOT_BE_UPDATED,
     CANNOT_BE_DEACTIVATED,
-    DOES_NOT_EXIST,
+    NOT_FOUND,
     ALREADY_EXISTS,
 
 }

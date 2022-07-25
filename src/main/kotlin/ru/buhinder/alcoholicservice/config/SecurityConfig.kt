@@ -43,7 +43,7 @@ class SecurityConfig {
 
             .authorizeExchange()
             //TODO refactor paths
-            .pathMatchers("/api/refresh", "/api/register")
+            .pathMatchers("/api/refresh", "/api/register", "/api/logout")
             .permitAll()
 
             .and()

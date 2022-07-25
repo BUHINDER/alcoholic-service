@@ -2,12 +2,12 @@ package ru.buhinder.alcoholicservice.controller.advice.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.NOT_FOUND
-import ru.buhinder.alcoholicservice.controller.advice.dto.AlcoholicErrorCode.DOES_NOT_EXIST
+import ru.buhinder.alcoholicservice.controller.advice.dto.AlcoholicErrorCode
 import ru.buhinder.alcoholicservice.controller.advice.dto.ErrorCode
 
-class EntityDoesNotExistException(
+class EntityNotFoundException(
     responseStatus: HttpStatus = NOT_FOUND,
-    code: ErrorCode = DOES_NOT_EXIST,
+    code: ErrorCode = AlcoholicErrorCode.NOT_FOUND,
     message: String,
     payload: Map<String, Any>,
 ) : AlcoholicApiException(
