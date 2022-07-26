@@ -1,4 +1,4 @@
-package ru.buhinder.alcoholicservice.service
+package ru.buhinder.alcoholicservice.security.manager
 
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.core.Authentication

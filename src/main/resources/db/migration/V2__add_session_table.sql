@@ -13,4 +13,5 @@ create table if not exists session_to_refresh
     session_id uuid    not null,
     is_active  boolean not null default true,
     foreign key (session_id) references session
+        on delete cascade
 );

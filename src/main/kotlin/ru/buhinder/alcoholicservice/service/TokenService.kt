@@ -102,11 +102,11 @@ class TokenService(
     }
 
     fun validateToken(token: String): Mono<DecodedJWT> {
-        return Mono.just(logger.info("Trying to validate token $token"))
+        return Mono.just(logger.info("Trying to validate token"))
             .map { token.replace("Bearer ", "") }
             .map { jwtVerifier.verify(it) }
-            .doOnSuccess { logger.info("Validated token successfully $token") }
-            .doOnError { logger.info("Error validated token $token") }
+            .doOnSuccess { logger.info("Validated token successfully") }
+            .doOnError { logger.info("Error validated token") }
     }
 
     private fun getSubject(jwt: DecodedJWT): Mono<UUID> {

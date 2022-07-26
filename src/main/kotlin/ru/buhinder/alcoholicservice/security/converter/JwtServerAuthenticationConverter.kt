@@ -1,4 +1,4 @@
-package ru.buhinder.alcoholicservice.converter
+package ru.buhinder.alcoholicservice.security.converter
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication

@@ -10,45 +10,50 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.toMono
+import ru.buhinder.alcoholicservice.dto.AccessTokenDto
+import ru.buhinder.alcoholicservice.dto.AlcoholicCredentials
 import ru.buhinder.alcoholicservice.dto.AlcoholicDto
 import ru.buhinder.alcoholicservice.dto.response.AlcoholicResponse
-import ru.buhinder.alcoholicservice.service.LogoutService
-import ru.buhinder.alcoholicservice.service.RegistrationService
+import ru.buhinder.alcoholicservice.service.AuthService
 import ru.buhinder.alcoholicservice.service.TokenService
 import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api")
 class AuthController(
-    private val registrationService: RegistrationService,
+    private val authService: AuthService,
     private val tokenService: TokenService,
-    private val logoutService: LogoutService,
 ) {
 
     @PostMapping("/login")
-    fun login(): Mono<ResponseEntity<Void>> {
-        return ResponseEntity.ok()
-            .build<Void>()
-            .toMono()
+    fun login(
+        @Valid
+        @RequestBody
+        alcoholicCredentials: AlcoholicCredentials
+    ): Mono<ResponseEntity<AccessTokenDto>> {
+        return authService.login(alcoholicCredentials)
+            .map {
+                ResponseEntity.ok()
+                    .header(SET_COOKIE, "${it.responseCookie}")
+                    .body(it.accessToken)
+            }
     }
 
     @PostMapping("/refresh")
     fun refresh(
         @CookieValue(value = "refreshToken") refreshToken: String
-    ): Mono<ResponseEntity<Void>> {
+    ): Mono<ResponseEntity<AccessTokenDto>> {
         return tokenService.refreshToken(refreshToken)
             .map {
                 ResponseEntity.ok()
-                    .header(AUTHORIZATION, it.accessToken.accessToken)
                     .header(SET_COOKIE, "${it.responseCookie}")
-                    .build()
+                    .body(it.accessToken)
             }
     }
 
     @PostMapping("/logout")
     fun logout(@RequestHeader(AUTHORIZATION) authorizationHeader: String): Mono<ResponseEntity<Void>> {
-        return logoutService.logout(authorizationHeader)
+        return authService.logout(authorizationHeader)
             .map { ResponseEntity.ok().build() }
     }
 
@@ -57,7 +62,7 @@ class AuthController(
         @Valid
         @RequestBody dto: AlcoholicDto
     ): Mono<AlcoholicResponse> {
-        return registrationService.register(dto)
+        return authService.register(dto)
     }
 
 }
