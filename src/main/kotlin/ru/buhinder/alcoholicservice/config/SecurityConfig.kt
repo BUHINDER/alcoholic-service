@@ -30,6 +30,7 @@ class SecurityConfig {
         jwtServerAuthenticationConverter: JwtServerAuthenticationConverter,
     ): SecurityWebFilterChain? {
         return http
+            // TODO: 27/07/2022 handle exceptions
             .csrf().disable()
             .httpBasic().disable()
             .formLogin().disable()
@@ -50,7 +51,6 @@ class SecurityConfig {
             .and()
             .addFilterAt(getJwtAuthenticationFilter(jwtAuthManager, jwtServerAuthenticationConverter), AUTHENTICATION)
 
-
             .build()
     }
 
@@ -59,6 +59,7 @@ class SecurityConfig {
         return BCryptPasswordEncoder()
     }
 
+    // TODO: 27/07/2022 make it a bean
     private fun getJwtAuthenticationFilter(
         jwtAuthenticationManager: JwtAuthenticationManager,
         jwtServerAuthenticationConverter: JwtServerAuthenticationConverter,

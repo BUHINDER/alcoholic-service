@@ -11,7 +11,7 @@ import ru.buhinder.alcoholicservice.service.TokenService
 
 @Component
 class JwtServerAuthenticationConverter(
-    private val tokenService: TokenService
+    private val tokenService: TokenService,
 ) : ServerAuthenticationConverter {
 
     override fun convert(exchange: ServerWebExchange): Mono<Authentication> {

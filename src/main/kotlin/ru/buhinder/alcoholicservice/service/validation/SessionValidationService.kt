@@ -7,7 +7,7 @@ import java.util.UUID
 
 @Service
 class SessionValidationService(
-    private val sessionDaoFacade: SessionDaoFacade
+    private val sessionDaoFacade: SessionDaoFacade,
 ) {
 
     fun validateSessionIsActive(sessionId: UUID): Mono<UUID> {

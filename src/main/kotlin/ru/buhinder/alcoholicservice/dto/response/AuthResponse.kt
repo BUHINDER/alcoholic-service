@@ -5,5 +5,5 @@ import ru.buhinder.alcoholicservice.dto.AccessTokenDto
 
 data class AuthResponse(
     val accessToken: AccessTokenDto,
-    val responseCookie: ResponseCookie
+    val responseCookie: ResponseCookie,
 )

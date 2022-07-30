@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.reactive.function.client.WebClientException
 import org.springframework.web.server.ServerWebInputException
-import ru.buhinder.alcoholicservice.controller.advice.dto.ErrorInfoDto
 import ru.buhinder.alcoholicservice.controller.advice.dto.AlcoholicErrorCode.VALIDATION_ERROR
+import ru.buhinder.alcoholicservice.controller.advice.dto.ErrorInfoDto
 import ru.buhinder.alcoholicservice.controller.advice.exception.AlcoholicApiException
 import java.util.StringJoiner
 import java.util.stream.Collectors

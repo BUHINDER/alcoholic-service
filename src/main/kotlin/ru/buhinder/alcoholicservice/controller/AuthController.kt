@@ -29,7 +29,7 @@ class AuthController(
     fun login(
         @Valid
         @RequestBody
-        alcoholicCredentials: AlcoholicCredentials
+        alcoholicCredentials: AlcoholicCredentials,
     ): Mono<ResponseEntity<AccessTokenDto>> {
         return authService.login(alcoholicCredentials)
             .map {
@@ -41,7 +41,7 @@ class AuthController(
 
     @PostMapping("/refresh")
     fun refresh(
-        @CookieValue(value = "refreshToken") refreshToken: String
+        @CookieValue(value = "refreshToken") refreshToken: String,
     ): Mono<ResponseEntity<AccessTokenDto>> {
         return tokenService.refreshToken(refreshToken)
             .map {
@@ -60,7 +60,7 @@ class AuthController(
     @PostMapping("/register")
     fun registerAlcoholic(
         @Valid
-        @RequestBody dto: AlcoholicDto
+        @RequestBody dto: AlcoholicDto,
     ): Mono<AlcoholicResponse> {
         return authService.register(dto)
     }
