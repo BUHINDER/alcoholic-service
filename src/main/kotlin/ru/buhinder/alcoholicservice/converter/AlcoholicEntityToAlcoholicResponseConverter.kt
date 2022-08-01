@@ -14,7 +14,7 @@ class AlcoholicEntityToAlcoholicResponseConverter : Converter<AlcoholicEntity, A
             firstname = source.firstname,
             lastName = source.lastName,
             age = source.age,
-            login = source.login,
+            email = source.email
         )
     }
 

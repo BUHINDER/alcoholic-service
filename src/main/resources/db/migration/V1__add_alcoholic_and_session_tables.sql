@@ -1,3 +1,14 @@
+create table if not exists alcoholic
+(
+    id        uuid primary key default gen_random_uuid(),
+    firstname varchar not null,
+    last_name varchar not null,
+    age       integer,
+    login     varchar not null unique,
+    password  varchar not null,
+    email     varchar not null unique
+);
+
 create table if not exists session
 (
     id           uuid primary key default gen_random_uuid(),
@@ -13,5 +24,4 @@ create table if not exists session_to_refresh
     session_id uuid    not null,
     is_active  boolean not null default true,
     foreign key (session_id) references session
-        on delete cascade
 );

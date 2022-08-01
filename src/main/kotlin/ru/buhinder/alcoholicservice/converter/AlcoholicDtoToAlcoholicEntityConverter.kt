@@ -17,6 +17,7 @@ class AlcoholicDtoToAlcoholicEntityConverter : Converter<AlcoholicDto, Alcoholic
             age = source.age,
             login = source.login,
             password = source.password,
+            email = source.email
         )
     }
 

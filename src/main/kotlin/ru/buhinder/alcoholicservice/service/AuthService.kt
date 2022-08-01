@@ -49,7 +49,8 @@ class AuthService(
                     lastName = it.t1.lastName,
                     age = it.t1.age,
                     login = it.t1.login,
-                    password = it.t2
+                    password = it.t2,
+                    email = it.t1.email
                 )
             }
             .flatMap { entity -> alcoholicDaoFacade.insert(entity) }

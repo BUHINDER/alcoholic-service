@@ -7,10 +7,8 @@ import java.util.UUID
 
 @Table("session")
 data class SessionEntity(
-
     @Id val id: UUID,
     val alcoholicId: UUID,
     val createdAt: Long? = Instant.now().toEpochMilli(),
     val isActive: Boolean? = true,
-
-    )
+)

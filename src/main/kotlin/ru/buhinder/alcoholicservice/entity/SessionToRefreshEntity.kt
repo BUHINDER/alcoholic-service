@@ -6,10 +6,7 @@ import java.util.UUID
 
 @Table("session_to_refresh")
 data class SessionToRefreshEntity(
-
-    //TODO Long?
     @Id val id: UUID,
     val sessionId: UUID,
     val isActive: Boolean? = true,
-
-    )
+)

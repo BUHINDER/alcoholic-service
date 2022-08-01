@@ -24,15 +24,27 @@ class AlcoholicDaoFacade(
     }
 
     fun findByLogin(login: String): Mono<AlcoholicEntity> {
-        return Mono.just(logger.info("Trying to find AlcoholicEntity with login $login"))
+        return Mono.just(logger.info("Trying to find AlcoholicEntity by login"))
             .flatMap {
                 r2dbcEntityOperations.selectOne(
                     Query.query(CriteriaDefinition.from(Criteria.where("login").`is`(login))),
                     AlcoholicEntity::class.java
                 )
             }
-            .doOnNext { logger.info("Found AlcoholicEntity with login $login") }
-            .doOnError { logger.info("Error retrieving AlcoholicEntity with login $login") }
+            .doOnNext { logger.info("Found AlcoholicEntity by login") }
+            .doOnError { logger.info("Error retrieving AlcoholicEntity by login") }
+    }
+
+    fun findByEmail(email: String): Mono<AlcoholicEntity> {
+        return Mono.just(logger.info("Trying to find AlcoholicEntity by email"))
+            .flatMap {
+                r2dbcEntityOperations.selectOne(
+                    Query.query(CriteriaDefinition.from(Criteria.where("email").`is`(email))),
+                    AlcoholicEntity::class.java
+                )
+            }
+            .doOnNext { logger.info("Found AlcoholicEntity by email") }
+            .doOnError { logger.info("Error retrieving AlcoholicEntity by email") }
     }
 
 }
