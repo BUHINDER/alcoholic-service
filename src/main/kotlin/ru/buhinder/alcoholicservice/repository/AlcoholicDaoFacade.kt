@@ -6,7 +6,9 @@ import org.springframework.data.relational.core.query.CriteriaDefinition
 import org.springframework.data.relational.core.query.Query
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.switchIfEmpty
 import ru.buhinder.alcoholicservice.config.LoggerDelegate
+import ru.buhinder.alcoholicservice.controller.advice.exception.EntityNotFoundException
 import ru.buhinder.alcoholicservice.entity.AlcoholicEntity
 
 @Repository
@@ -35,12 +37,20 @@ class AlcoholicDaoFacade(
             .doOnError { logger.info("Error retrieving AlcoholicEntity by login") }
     }
 
-    fun findByEmail(email: String): Mono<AlcoholicEntity> {
+    fun getByEmail(email: String): Mono<AlcoholicEntity> {
         return Mono.just(logger.info("Trying to find AlcoholicEntity by email"))
             .flatMap {
                 r2dbcEntityOperations.selectOne(
                     Query.query(CriteriaDefinition.from(Criteria.where("email").`is`(email))),
                     AlcoholicEntity::class.java
+                )
+            }
+            .switchIfEmpty {
+                Mono.error(
+                    EntityNotFoundException(
+                        message = "Alcoholic not found",
+                        payload = mapOf("email" to email)
+                    )
                 )
             }
             .doOnNext { logger.info("Found AlcoholicEntity by email") }

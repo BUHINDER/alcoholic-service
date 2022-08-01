@@ -22,7 +22,7 @@ data class AlcoholicDto(
     @field:NotBlank(message = "password is required")
     val password: String,
 
-    @field:Email
+    @field:Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")
     @field:NotBlank(message = "email is required")
     val email: String,
 )

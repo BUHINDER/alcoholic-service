@@ -13,7 +13,7 @@ class AlcoholicService(
 ) {
 
     fun get(email: String): Mono<AlcoholicResponse> {
-        return alcoholicDaoFacade.findByEmail(email)
+        return alcoholicDaoFacade.getByEmail(email)
             .map { conversionService.convert(it, AlcoholicResponse::class.java)!! }
     }
 
