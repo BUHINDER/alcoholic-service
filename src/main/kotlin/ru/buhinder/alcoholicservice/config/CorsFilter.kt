@@ -18,7 +18,7 @@ class CorsFilter : WebFilter {
     override fun filter(ctx: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         ctx.response.headers.add(ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:3000")
         ctx.response.headers.add(ACCESS_CONTROL_ALLOW_METHODS, "GET, PUT, POST, DELETE, OPTIONS")
-        ctx.response.headers.add(ACCESS_CONTROL_ALLOW_HEADERS, "Authorization, Basic, Content-Type")
+        ctx.response.headers.add(ACCESS_CONTROL_ALLOW_HEADERS, "Authorization, Content-Type")
         ctx.response.headers.add(ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
         return if (ctx.request.method == HttpMethod.OPTIONS) {
             ctx.response.statusCode = HttpStatus.NO_CONTENT
