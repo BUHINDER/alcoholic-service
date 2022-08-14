@@ -15,6 +15,7 @@ import ru.buhinder.alcoholicservice.dto.response.AuthResponse
 import ru.buhinder.alcoholicservice.entity.AlcoholicEntity
 import ru.buhinder.alcoholicservice.entity.SessionEntity
 import ru.buhinder.alcoholicservice.entity.SessionToRefreshEntity
+import ru.buhinder.alcoholicservice.model.JwtContextModel
 import ru.buhinder.alcoholicservice.repository.AlcoholicDaoFacade
 import ru.buhinder.alcoholicservice.repository.SessionDaoFacade
 import ru.buhinder.alcoholicservice.repository.SessionToRefreshDaoFacade
@@ -71,15 +72,16 @@ class AuthService(
                             payload = mapOf("login" to login)
                         ).toMono()
                     }
-                    .flatMap { alcoholicEntity ->
-                        passwordService.comparePasswords(password, alcoholicEntity.password)
+                    .flatMap { alc ->
+                        passwordService.comparePasswords(password, alc.password)
                             .flatMap {
                                 if (!it) {
                                     return@flatMap Mono.error(RuntimeException("Password does not match"))
                                 }
                                 val sessionId = UUID.randomUUID()
-                                val alcoholicId = alcoholicEntity.id
-                                val accessToken = tokenService.createAccessToken(alcoholicId, sessionId)
+                                val alcoholicId = alc.id
+                                val context = JwtContextModel("${alc.firstname} ${alc.lastName}")
+                                val accessToken = tokenService.createAccessToken(alcoholicId, sessionId, context)
                                 val refreshToken = tokenService.createRefreshToken(alcoholicId, sessionId)
                                 val refreshTokenCookie = tokenService.createRefreshTokenCookie(refreshToken)
                                 val session = SessionEntity(id = sessionId, alcoholicId = alcoholicId)
