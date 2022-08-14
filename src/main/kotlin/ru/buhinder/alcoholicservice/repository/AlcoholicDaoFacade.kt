@@ -10,6 +10,7 @@ import reactor.kotlin.core.publisher.switchIfEmpty
 import ru.buhinder.alcoholicservice.config.LoggerDelegate
 import ru.buhinder.alcoholicservice.controller.advice.exception.EntityNotFoundException
 import ru.buhinder.alcoholicservice.entity.AlcoholicEntity
+import java.util.UUID
 
 @Repository
 class AlcoholicDaoFacade(
@@ -55,6 +56,13 @@ class AlcoholicDaoFacade(
             }
             .doOnNext { logger.info("Found AlcoholicEntity by email") }
             .doOnError { logger.info("Error retrieving AlcoholicEntity by email") }
+    }
+
+    fun findById(id: UUID): Mono<AlcoholicEntity> {
+        return r2dbcEntityOperations.selectOne(
+            Query.query(CriteriaDefinition.from(Criteria.where("id").`is`(id))),
+            AlcoholicEntity::class.java
+        )
     }
 
 }
