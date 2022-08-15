@@ -39,6 +39,7 @@ class AuthService(
     fun register(dto: AlcoholicDto): Mono<AlcoholicResponse> {
         return dto.toMono()
             .doOnNext { logger.info("Registering alcoholic") }
+            .map { capitalizeName(it) }
             .flatMap {
                 registrationValidationService.validateLoginDoesNotExist(it)
                     .zipWith(passwordService.encodePassword(it.password))
@@ -101,5 +102,14 @@ class AuthService(
             .flatMap { sessionToRefreshDaoFacade.invalidateRefreshToken(it) }
             .flatMap { sessionDaoFacade.invalidateSession(it) }
     }
+
+    private fun capitalizeName(dto: AlcoholicDto) = AlcoholicDto(
+        firstname = dto.firstname.lowercase().replaceFirstChar { it.uppercaseChar() },
+        lastName = dto.lastName.lowercase().replaceFirstChar { it.uppercaseChar() },
+        age = dto.age,
+        login = dto.login,
+        password = dto.password,
+        email = dto.email,
+    )
 
 }
