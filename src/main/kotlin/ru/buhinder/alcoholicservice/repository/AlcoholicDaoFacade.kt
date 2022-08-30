@@ -58,6 +58,26 @@ class AlcoholicDaoFacade(
             .doOnError { logger.info("Error retrieving AlcoholicEntity by email") }
     }
 
+    fun getById(id: UUID): Mono<AlcoholicEntity> {
+        return Mono.just(logger.info("Trying to find AlcoholicEntity by email"))
+            .flatMap {
+                r2dbcEntityOperations.selectOne(
+                    Query.query(CriteriaDefinition.from(Criteria.where("id").`is`(id))),
+                    AlcoholicEntity::class.java
+                )
+            }
+            .switchIfEmpty {
+                Mono.error(
+                    EntityNotFoundException(
+                        message = "Alcoholic not found",
+                        payload = mapOf("id" to id)
+                    )
+                )
+            }
+            .doOnNext { logger.info("Found AlcoholicEntity by email") }
+            .doOnError { logger.info("Error retrieving AlcoholicEntity by email") }
+    }
+
     fun findById(id: UUID): Mono<AlcoholicEntity> {
         return r2dbcEntityOperations.selectOne(
             Query.query(CriteriaDefinition.from(Criteria.where("id").`is`(id))),
