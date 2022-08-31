@@ -59,7 +59,7 @@ class AlcoholicDaoFacade(
     }
 
     fun getById(id: UUID): Mono<AlcoholicEntity> {
-        return Mono.just(logger.info("Trying to find AlcoholicEntity by email"))
+        return Mono.just(logger.info("Trying to find AlcoholicEntity by id $id"))
             .flatMap {
                 r2dbcEntityOperations.selectOne(
                     Query.query(CriteriaDefinition.from(Criteria.where("id").`is`(id))),
@@ -74,8 +74,8 @@ class AlcoholicDaoFacade(
                     )
                 )
             }
-            .doOnNext { logger.info("Found AlcoholicEntity by email") }
-            .doOnError { logger.info("Error retrieving AlcoholicEntity by email") }
+            .doOnNext { logger.info("Found AlcoholicEntity by id $id") }
+            .doOnError { logger.info("Error retrieving AlcoholicEntity by id $id") }
     }
 
     fun findById(id: UUID): Mono<AlcoholicEntity> {

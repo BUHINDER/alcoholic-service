@@ -16,7 +16,7 @@ class AlcoholicController(
     private val alcoholicService: AlcoholicService,
 ) {
 
-    @GetMapping("/{email}")
+    @GetMapping("/email/{email}")
     fun get(@PathVariable email: String): Mono<AlcoholicResponse> {
         return alcoholicService.get(email)
     }
@@ -24,6 +24,11 @@ class AlcoholicController(
     @GetMapping("/own")
     fun getOwnInfo(principal: Principal): Mono<AlcoholicResponse> {
         return alcoholicService.get(UUID.fromString(principal.name))
+    }
+
+    @GetMapping("/{alcoholicId}")
+    fun getById(@PathVariable alcoholicId: UUID): Mono<AlcoholicResponse> {
+        return alcoholicService.get(alcoholicId)
     }
 
 }
