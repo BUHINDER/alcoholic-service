@@ -2,6 +2,7 @@ package ru.buhinder.alcoholicservice.service
 
 import org.springframework.core.convert.ConversionService
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import ru.buhinder.alcoholicservice.dto.response.AlcoholicResponse
 import ru.buhinder.alcoholicservice.repository.AlcoholicDaoFacade
@@ -23,4 +24,8 @@ class AlcoholicService(
             .map { conversionService.convert(it, AlcoholicResponse::class.java)!! }
     }
 
+    fun getByIds(alcoholicIds: List<UUID>): Flux<AlcoholicResponse> {
+        return alcoholicDaoFacade.findByIds(alcoholicIds)
+            .map { conversionService.convert(it, AlcoholicResponse::class.java)!! }
+    }
 }

@@ -5,6 +5,7 @@ import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.query.CriteriaDefinition
 import org.springframework.data.relational.core.query.Query
 import org.springframework.stereotype.Repository
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 import ru.buhinder.alcoholicservice.config.LoggerDelegate
@@ -23,7 +24,6 @@ class AlcoholicDaoFacade(
             .flatMap { r2dbcEntityOperations.insert(entity) }
             .doOnNext { logger.info("Saved AlcoholicEntity with id ${entity.id}") }
             .doOnError { logger.info("Error saving AlcoholicEntity with id ${entity.id}") }
-
     }
 
     fun findByLogin(login: String): Mono<AlcoholicEntity> {
@@ -85,4 +85,10 @@ class AlcoholicDaoFacade(
         )
     }
 
+    fun findByIds(ids: List<UUID>): Flux<AlcoholicEntity> {
+        return r2dbcEntityOperations.select(
+            Query.query(CriteriaDefinition.from(Criteria.where("id").`in`(ids))),
+            AlcoholicEntity::class.java
+        )
+    }
 }
