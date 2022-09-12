@@ -35,9 +35,9 @@ class AlcoholicController(
     }
 
     @PostMapping("/list")
-    fun getByIdList(
+    fun findByIdList(
         @RequestBody idList: List<UUID>
     ): Flux<AlcoholicResponse> {
-        return alcoholicService.getByIds(idList)
+        return alcoholicService.findByIdList(idList)
     }
 }

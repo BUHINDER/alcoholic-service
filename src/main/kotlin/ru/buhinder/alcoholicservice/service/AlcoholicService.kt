@@ -24,8 +24,8 @@ class AlcoholicService(
             .map { conversionService.convert(it, AlcoholicResponse::class.java)!! }
     }
 
-    fun getByIds(alcoholicIds: List<UUID>): Flux<AlcoholicResponse> {
-        return alcoholicDaoFacade.findByIds(alcoholicIds)
+    fun findByIdList(alcoholicIds: List<UUID>): Flux<AlcoholicResponse> {
+        return alcoholicDaoFacade.findByIdList(alcoholicIds)
             .map { conversionService.convert(it, AlcoholicResponse::class.java)!! }
     }
 }

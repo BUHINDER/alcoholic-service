@@ -85,7 +85,7 @@ class AlcoholicDaoFacade(
         )
     }
 
-    fun findByIds(ids: List<UUID>): Flux<AlcoholicEntity> {
+    fun findByIdList(ids: List<UUID>): Flux<AlcoholicEntity> {
         return r2dbcEntityOperations.select(
             Query.query(CriteriaDefinition.from(Criteria.where("id").`in`(ids))),
             AlcoholicEntity::class.java
