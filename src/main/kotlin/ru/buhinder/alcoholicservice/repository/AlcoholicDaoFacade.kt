@@ -109,11 +109,4 @@ class AlcoholicDaoFacade(
         )
     }
 
-    fun findByEmail(email: String): Mono<AlcoholicEntity> {
-        return r2dbcEntityOperations.selectOne(
-            Query.query(CriteriaDefinition.from(Criteria.where("email").`is`(email))),
-            AlcoholicEntity::class.java
-        )
-    }
-
 }
