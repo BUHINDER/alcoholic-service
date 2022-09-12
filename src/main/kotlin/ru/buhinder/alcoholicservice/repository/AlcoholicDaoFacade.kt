@@ -1,5 +1,6 @@
 package ru.buhinder.alcoholicservice.repository
 
+import java.util.UUID
 import org.springframework.data.r2dbc.core.R2dbcEntityOperations
 import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.query.CriteriaDefinition
@@ -10,7 +11,6 @@ import reactor.kotlin.core.publisher.switchIfEmpty
 import ru.buhinder.alcoholicservice.config.LoggerDelegate
 import ru.buhinder.alcoholicservice.controller.advice.exception.EntityNotFoundException
 import ru.buhinder.alcoholicservice.entity.AlcoholicEntity
-import java.util.UUID
 
 @Repository
 class AlcoholicDaoFacade(
@@ -31,6 +31,30 @@ class AlcoholicDaoFacade(
             .flatMap {
                 r2dbcEntityOperations.selectOne(
                     Query.query(CriteriaDefinition.from(Criteria.where("login").`is`(login))),
+                    AlcoholicEntity::class.java
+                )
+            }
+            .doOnNext { logger.info("Found AlcoholicEntity by login") }
+            .doOnError { logger.info("Error retrieving AlcoholicEntity by login") }
+    }
+
+    fun existsByLogin(login: String): Mono<Boolean> {
+        return Mono.just(logger.info("Trying to check existence AlcoholicEntity by email"))
+            .flatMap {
+                r2dbcEntityOperations.exists(
+                    Query.query(CriteriaDefinition.from(Criteria.where("login").`is`(login))),
+                    AlcoholicEntity::class.java
+                )
+            }
+            .doOnNext { logger.info("Found AlcoholicEntity by login") }
+            .doOnError { logger.info("Error retrieving AlcoholicEntity by login") }
+    }
+
+    fun existsByEmail(email: String): Mono<Boolean> {
+        return Mono.just(logger.info("Trying to check existence AlcoholicEntity by email"))
+            .flatMap {
+                r2dbcEntityOperations.exists(
+                    Query.query(CriteriaDefinition.from(Criteria.where("email").`is`(email))),
                     AlcoholicEntity::class.java
                 )
             }
@@ -81,6 +105,13 @@ class AlcoholicDaoFacade(
     fun findById(id: UUID): Mono<AlcoholicEntity> {
         return r2dbcEntityOperations.selectOne(
             Query.query(CriteriaDefinition.from(Criteria.where("id").`is`(id))),
+            AlcoholicEntity::class.java
+        )
+    }
+
+    fun findByEmail(email: String): Mono<AlcoholicEntity> {
+        return r2dbcEntityOperations.selectOne(
+            Query.query(CriteriaDefinition.from(Criteria.where("email").`is`(email))),
             AlcoholicEntity::class.java
         )
     }
