@@ -40,12 +40,8 @@ class AuthService(
         return dto.toMono()
             .doOnNext { logger.info("Registering alcoholic") }
             .map { capitalizeName(it) }
-            .flatMap {
-                registrationValidationService.validateLoginDoesNotExist(it)
-            }
-            .flatMap {
-                registrationValidationService.validateEmailDoesNotExists(it)
-            }
+            .flatMap { registrationValidationService.validateLoginDoesNotExist(it) }
+            .flatMap { registrationValidationService.validateEmailDoesNotExists(it) }
             .zipWith(passwordService.encodePassword(dto.password))
             .map {
                 AlcoholicEntity(
