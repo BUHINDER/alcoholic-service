@@ -1,5 +1,6 @@
 package ru.buhinder.alcoholicservice.service
 
+import java.util.UUID
 import org.springframework.core.convert.ConversionService
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -21,7 +22,6 @@ import ru.buhinder.alcoholicservice.repository.SessionDaoFacade
 import ru.buhinder.alcoholicservice.repository.SessionToRefreshDaoFacade
 import ru.buhinder.alcoholicservice.service.validation.RegistrationValidationService
 import ru.buhinder.alcoholicservice.service.validation.SessionValidationService
-import java.util.UUID
 
 @Service
 class AuthService(
@@ -40,10 +40,9 @@ class AuthService(
         return dto.toMono()
             .doOnNext { logger.info("Registering alcoholic") }
             .map { capitalizeName(it) }
-            .flatMap {
-                registrationValidationService.validateLoginDoesNotExist(it)
-                    .zipWith(passwordService.encodePassword(it.password))
-            }
+            .flatMap { registrationValidationService.validateLoginDoesNotExist(it) }
+            .flatMap { registrationValidationService.validateEmailDoesNotExists(it) }
+            .zipWith(passwordService.encodePassword(dto.password))
             .map {
                 AlcoholicEntity(
                     id = UUID.randomUUID(),

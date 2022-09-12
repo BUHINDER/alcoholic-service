@@ -14,16 +14,33 @@ class RegistrationValidationService(
 ) {
 
     fun validateLoginDoesNotExist(dto: AlcoholicDto): Mono<AlcoholicDto> {
-        return dto.toMono()
-            .flatMap { alcoholicDaoFacade.findByLogin(it.login) }
-            .map {
-                throw EntityAlreadyExistsException(
-                    message = "Alcoholic already exists",
-                    payload = emptyMap()
+
+        return alcoholicDaoFacade.existsByLogin(dto.login)
+            .filter { it }
+            .flatMap<AlcoholicDto> {
+                Mono.error(
+                    EntityAlreadyExistsException(
+                        message = "Alcoholic with login ${dto.login} already exists",
+                        payload = emptyMap()
+                    )
                 )
-                dto
             }
             .switchIfEmpty { dto.toMono() }
     }
 
+
+    fun validateEmailDoesNotExists(dto: AlcoholicDto): Mono<AlcoholicDto> {
+
+        return alcoholicDaoFacade.existsByEmail(dto.email)
+            .filter { it }
+            .flatMap<AlcoholicDto> {
+                Mono.error(
+                    EntityAlreadyExistsException(
+                        message = "Alcoholic with email ${dto.email} already exists",
+                        payload = emptyMap()
+                    )
+                )
+            }
+            .switchIfEmpty { dto.toMono() }
+    }
 }
