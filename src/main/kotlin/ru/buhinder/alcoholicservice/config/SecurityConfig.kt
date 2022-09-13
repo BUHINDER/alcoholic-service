@@ -42,6 +42,7 @@ class SecurityConfig {
             .authorizeExchange()
             .pathMatchers(HttpMethod.OPTIONS).permitAll()
             .pathMatchers("/api/refresh", "/api/register", "/api/logout", "/api/login").permitAll()
+            .pathMatchers("/api/alcoholic/image/**").permitAll()
 
             .and()
 

@@ -1,6 +1,5 @@
 package ru.buhinder.alcoholicservice.service
 
-import java.util.UUID
 import org.springframework.core.convert.ConversionService
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
@@ -14,6 +13,7 @@ import ru.buhinder.alcoholicservice.dto.AlcoholicCredentials
 import ru.buhinder.alcoholicservice.dto.AlcoholicDto
 import ru.buhinder.alcoholicservice.dto.response.AlcoholicResponse
 import ru.buhinder.alcoholicservice.dto.response.AuthResponse
+import ru.buhinder.alcoholicservice.entity.AlcoholicEntity
 import ru.buhinder.alcoholicservice.entity.SessionEntity
 import ru.buhinder.alcoholicservice.entity.SessionToRefreshEntity
 import ru.buhinder.alcoholicservice.model.JwtContextModel
@@ -24,6 +24,7 @@ import ru.buhinder.alcoholicservice.service.factory.AlcoholicEntityFactory
 import ru.buhinder.alcoholicservice.service.validation.ImageValidationService
 import ru.buhinder.alcoholicservice.service.validation.RegistrationValidationService
 import ru.buhinder.alcoholicservice.service.validation.SessionValidationService
+import java.util.UUID
 
 @Service
 class AuthService(
@@ -37,7 +38,6 @@ class AuthService(
     private val sessionValidationService: SessionValidationService,
     private val imageValidationService: ImageValidationService,
     private val imageService: ImageService,
-    private val alcoholicEntityFactory: AlcoholicEntityFactory,
 ) {
     private val logger by LoggerDelegate()
 
@@ -53,9 +53,9 @@ class AuthService(
                 image.toMono()
                     .flatMap { imageValidationService.validateImageFormat(it) }
                     .flatMap { imageService.saveAlcoholicImage(it) }
-                    .map { alcoholicEntityFactory.createAlcoholicEntity(tuple.t1, tuple.t2, it) }
+                    .map { AlcoholicEntityFactory.createAlcoholicEntity(tuple.t1, tuple.t2, it) }
                     .switchIfEmpty(
-                        alcoholicEntityFactory.createAlcoholicEntity(
+                        AlcoholicEntityFactory.createAlcoholicEntity(
                             tuple.t1,
                             tuple.t2,
                             null
@@ -82,14 +82,14 @@ class AuthService(
                     }
                     .flatMap { alc ->
                         passwordService.comparePasswords(password, alc.password)
+                            .zipWhen { buildContext(alc) }
                             .flatMap {
-                                if (!it) {
+                                if (!it.t1) {
                                     Mono.error(RuntimeException("Password does not match"))
                                 } else {
                                     val sessionId = UUID.randomUUID()
                                     val alcoholicId = alc.id
-                                    val context = JwtContextModel("${alc.firstname} ${alc.lastName}")
-                                    val accessToken = tokenService.createAccessToken(alcoholicId, sessionId, context)
+                                    val accessToken = tokenService.createAccessToken(alcoholicId, sessionId, it.t2)
                                     val refreshToken = tokenService.createRefreshToken(alcoholicId, sessionId)
                                     val refreshTokenCookie = tokenService.createRefreshTokenCookie(refreshToken)
                                     val session = SessionEntity(id = sessionId, alcoholicId = alcoholicId)
@@ -119,5 +119,16 @@ class AuthService(
         password = dto.password,
         email = dto.email,
     )
+
+    private fun buildContext(alcoholicEntity: AlcoholicEntity): Mono<JwtContextModel> {
+        return alcoholicEntity.toMono()
+            .map { entity ->
+                JwtContextModel(
+                    "${entity.firstname} ${entity.lastName}",
+                    entity.photoId
+                )
+            }
+
+    }
 
 }

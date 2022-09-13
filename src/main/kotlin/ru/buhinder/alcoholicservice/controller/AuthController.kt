@@ -1,6 +1,5 @@
 package ru.buhinder.alcoholicservice.controller
 
-import javax.validation.Valid
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpHeaders.SET_COOKIE
 import org.springframework.http.HttpStatus
@@ -21,6 +20,7 @@ import ru.buhinder.alcoholicservice.dto.AlcoholicCredentials
 import ru.buhinder.alcoholicservice.dto.AlcoholicDto
 import ru.buhinder.alcoholicservice.service.AuthService
 import ru.buhinder.alcoholicservice.service.TokenService
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api")
@@ -65,7 +65,7 @@ class AuthController(
     @PostMapping("/register", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun registerAlcoholic(
         @Valid
-        @RequestPart("alcoholic") dto: AlcoholicDto,
+        @RequestPart("user") dto: AlcoholicDto,
         @RequestPart(value = "image", required = false)
         image: Mono<FilePart>,
     ): Mono<Void> {
