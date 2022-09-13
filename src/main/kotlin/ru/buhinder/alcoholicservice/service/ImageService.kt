@@ -25,14 +25,13 @@ class ImageService(
 ) {
 
     fun saveAlcoholicImage(image: FilePart): Mono<UUID> {
-        val imageId = UUID.randomUUID()
         return image.toMono()
             .flatMapMany { it.content() }
             .map { it.asInputStream(true) }
             .reduce(::SequenceInputStream)
             .map {
                 PutObjectArgs.builder()
-                    .`object`("$imageId")
+                    .`object`("${UUID.randomUUID()}")
                     .bucket(minioProperties.bucket)
                     .contentType(IMAGE_JPEG_VALUE)
                     .userMetadata(mapOf(minioProperties.file.name to image.filename()))

@@ -20,7 +20,7 @@ import ru.buhinder.alcoholicservice.model.JwtContextModel
 import ru.buhinder.alcoholicservice.repository.AlcoholicDaoFacade
 import ru.buhinder.alcoholicservice.repository.SessionDaoFacade
 import ru.buhinder.alcoholicservice.repository.SessionToRefreshDaoFacade
-import ru.buhinder.alcoholicservice.service.factory.createAlcoholicEntity
+import ru.buhinder.alcoholicservice.service.factory.AlcoholicEntityFactory
 import ru.buhinder.alcoholicservice.service.validation.ImageValidationService
 import ru.buhinder.alcoholicservice.service.validation.RegistrationValidationService
 import ru.buhinder.alcoholicservice.service.validation.SessionValidationService
@@ -37,6 +37,7 @@ class AuthService(
     private val sessionValidationService: SessionValidationService,
     private val imageValidationService: ImageValidationService,
     private val imageService: ImageService,
+    private val alcoholicEntityFactory: AlcoholicEntityFactory,
 ) {
     private val logger by LoggerDelegate()
 
@@ -52,8 +53,14 @@ class AuthService(
                 image.toMono()
                     .flatMap { imageValidationService.validateImageFormat(it) }
                     .flatMap { imageService.saveAlcoholicImage(it) }
-                    .map { createAlcoholicEntity(tuple.t1, tuple.t2, it) }
-                    .switchIfEmpty(createAlcoholicEntity(tuple.t1, tuple.t2, null).toMono())
+                    .map { alcoholicEntityFactory.createAlcoholicEntity(tuple.t1, tuple.t2, it) }
+                    .switchIfEmpty(
+                        alcoholicEntityFactory.createAlcoholicEntity(
+                            tuple.t1,
+                            tuple.t2,
+                            null
+                        ).toMono()
+                    )
             }
             .flatMap { entity -> alcoholicDaoFacade.insert(entity) }
             .map { conversionService.convert(it, AlcoholicResponse::class.java)!! }
