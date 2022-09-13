@@ -1,13 +1,10 @@
 package ru.buhinder.alcoholicservice.service.factory
 
-import java.util.UUID
-import org.springframework.stereotype.Component
 import ru.buhinder.alcoholicservice.dto.AlcoholicDto
 import ru.buhinder.alcoholicservice.entity.AlcoholicEntity
+import java.util.UUID
 
-@Component
-class AlcoholicEntityFactory {
-
+object AlcoholicEntityFactory {
     fun createAlcoholicEntity(
         alcoholicDto: AlcoholicDto,
         encodedPassword: String,
@@ -22,5 +19,4 @@ class AlcoholicEntityFactory {
         email = alcoholicDto.email,
         photoId = photoId
     )
-
 }

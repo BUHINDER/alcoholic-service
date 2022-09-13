@@ -78,7 +78,13 @@ class TokenService(
             //TODO replace with properties with conversion to date
             .withExpiresAt(Date.from(Instant.now().plus(accessTokenDuration)))
             .withClaim("roles", listOf("$ROLE_DRINKER"))
-            .withClaim("context", mapOf("displayName" to context.displayName))
+            .withClaim(
+                "context",
+                mapOf(
+                    "displayName" to context.displayName,
+                    "photoId" to context.photoId.toString(),
+                )
+            )
             .withClaim("session", "$sessionUUID")
             .sign(algorithm)
     }
@@ -128,7 +134,13 @@ class TokenService(
 
     private fun buildContext(alcoholicId: UUID): Mono<JwtContextModel> {
         return alcoholicDaoFacade.findById(alcoholicId)
-            .map { JwtContextModel("${it.firstname} ${it.lastName}") }
+            .map { entity ->
+                JwtContextModel(
+                    "${entity.firstname} ${entity.lastName}",
+                    entity.photoId
+                )
+            }
+
     }
 
 }
