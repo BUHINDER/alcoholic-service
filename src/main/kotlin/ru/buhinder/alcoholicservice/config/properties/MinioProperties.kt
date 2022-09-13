@@ -11,4 +11,10 @@ data class MinioProperties(
     val url: String,
     val port: Int,
     val bucket: String,
-)
+    val file: File,
+) {
+    data class File(
+        val part: Long,
+        val name: String,
+    )
+}
