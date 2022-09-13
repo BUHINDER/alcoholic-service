@@ -1,8 +1,8 @@
 package ru.buhinder.alcoholicservice.entity
 
+import java.util.UUID
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
-import java.util.UUID
 
 @Table("alcoholic")
 data class AlcoholicEntity(
@@ -13,4 +13,5 @@ data class AlcoholicEntity(
     val login: String,
     val password: String,
     val email: String,
+    var photoId: UUID? = null
 )

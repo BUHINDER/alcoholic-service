@@ -8,4 +8,5 @@ data class AlcoholicResponse(
     val lastName: String,
     val age: Int?,
     val email: String,
+    val photoId: UUID?
 )

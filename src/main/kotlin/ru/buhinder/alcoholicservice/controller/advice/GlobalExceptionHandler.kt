@@ -1,5 +1,9 @@
 package ru.buhinder.alcoholicservice.controller.advice
 
+import io.minio.errors.ErrorResponseException
+import java.util.StringJoiner
+import java.util.stream.Collectors
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.http.ResponseEntity
@@ -8,14 +12,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.reactive.function.client.WebClientException
 import org.springframework.web.server.ServerWebInputException
+import ru.buhinder.alcoholicservice.config.LoggerDelegate
 import ru.buhinder.alcoholicservice.controller.advice.dto.AlcoholicErrorCode.VALIDATION_ERROR
 import ru.buhinder.alcoholicservice.controller.advice.dto.ErrorInfoDto
+import ru.buhinder.alcoholicservice.controller.advice.dto.MinioErrorCode
 import ru.buhinder.alcoholicservice.controller.advice.exception.AlcoholicApiException
-import java.util.StringJoiner
-import java.util.stream.Collectors
 
 @ControllerAdvice
 class GlobalExceptionHandler {
+
+    private val logger by LoggerDelegate()
 
     @ExceptionHandler(WebExchangeBindException::class)
     fun handleException(exception: WebExchangeBindException): ResponseEntity<ErrorInfoDto> {
@@ -67,8 +73,22 @@ class GlobalExceptionHandler {
             .body(apiErrorDto)
     }
 
+    @ExceptionHandler(ErrorResponseException::class)
+    fun handleMinioException(exception: ErrorResponseException): ResponseEntity<ErrorInfoDto> {
+        logger.error("Thrown exception: ", exception)
+        val apiErrorDto = ErrorInfoDto(
+            code = MinioErrorCode.KEY_DOES_NOT_EXIST,
+            message = exception.errorResponse().message(),
+            payload = mapOf("key" to exception.errorResponse().objectName())
+        )
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(apiErrorDto)
+    }
+
     @ExceptionHandler(Exception::class)
     fun handleCommonException(exception: Exception): ResponseEntity<ErrorInfoDto> {
+        logger.error("Thrown exception: ", exception)
+
         val apiErrorDto = ErrorInfoDto(exception)
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)
             .body(apiErrorDto)
