@@ -109,4 +109,16 @@ class AlcoholicDaoFacade(
         )
     }
 
+    fun existsImageByAlcoholicId(id: UUID): Mono<Boolean> {
+        return r2dbcEntityOperations.exists(
+            Query.query(
+                CriteriaDefinition.from(
+                    Criteria.where("id").`is`(id)
+                        .and("photo_id").isNotNull
+                )
+            ),
+            AlcoholicEntity::class.java
+        )
+    }
+
 }
