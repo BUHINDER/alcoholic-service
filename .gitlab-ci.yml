@@ -18,7 +18,7 @@ test:
     - java
   only:
     - merge_requests
-    - dev
+    - main
 
 build-mr:
   stage: build-app
@@ -42,7 +42,7 @@ build-app:
       - ./app/build/libs/*.jar
     expire_in: 1 hour
   only:
-    - dev
+    - main
 
 build-image:
   tags:
@@ -54,4 +54,4 @@ build-image:
     - docker build -t $CI_REGISTRY_IMAGE:$CI_PIPELINE_IID .
     - docker push $CI_REGISTRY_IMAGE:$CI_PIPELINE_IID
   only:
-    - dev
+    - main
