@@ -2,8 +2,11 @@ package ru.buhinder.alcoholicservice.controller
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import ru.buhinder.alcoholicservice.dto.response.AlcoholicResponse
 import ru.buhinder.alcoholicservice.service.AlcoholicService
@@ -31,4 +34,10 @@ class AlcoholicController(
         return alcoholicService.get(alcoholicId)
     }
 
+    @PostMapping("/list")
+    fun findByIdList(
+        @RequestBody idList: List<UUID>
+    ): Flux<AlcoholicResponse> {
+        return alcoholicService.findByIdList(idList)
+    }
 }
